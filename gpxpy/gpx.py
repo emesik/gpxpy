@@ -620,6 +620,39 @@ class GPXTrackSegment:
 
         self.points = reduced_points
 
+    def reduce_points_to(self, max_points):
+        """
+        Reduces the number of points in the track segment to less or equal
+        of max_points. First points to remove will be those which change overall
+        distance the least if absent. Segment points will be updated in place.
+
+        Parameters
+        ----------
+        max_points : int
+            The maximum number of points
+        """
+        if len(self.points) <= max_points:
+            return
+        rpts = list(self.points)
+        while len(rpts) > max_points:
+            min_diff = float('inf')
+            min_diff_idx = None
+            idx = 1
+            while idx < len(rpts) - 1:
+                print(idx)
+                diff = (abs(rpts[idx-1].distance_2d(rpts[idx])) +
+                        abs(rpts[idx].distance_2d(rpts[idx+1]))) \
+                        - abs(rpts[idx-1].distance_2d(rpts[idx+1]))
+                print(diff)
+                if min_diff > diff:
+                    print("min")
+                    min_diff = diff
+                    min_diff_idx = idx
+                idx += 1
+            del rpts[min_diff_idx]
+
+        self.points = rpts
+
     def _find_next_simplified_point(self, pos, max_distance):
         for candidate in range(pos + 1, len(self.points) - 1):
             for i in range(pos + 1, candidate):

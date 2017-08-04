@@ -401,6 +401,23 @@ class AbstractTests:
         self.assertTrue(points_reduced < points_original)
         self.assertTrue(points_reduced < max_reduced_points_no)
 
+    def test_reduce_points_to(self):
+        f = open('test_files/Mojstrovka.gpx')
+        parser = mod_parser.GPXParser(f, parser=self.get_parser_type())
+        gpx = parser.parse()
+        f.close()
+
+        segment = gpx.tracks[0].segments[0]
+
+        segment.reduce_points_to(100)
+        self.assertEquals(segment.get_points_no(), 100)
+        segment.reduce_points_to(50)
+        self.assertEquals(segment.get_points_no(), 50)
+        segment.reduce_points_to(20)
+        self.assertEquals(segment.get_points_no(), 20)
+        segment.reduce_points_to(5)
+        self.assertEquals(segment.get_points_no(), 5)
+
     def test_smooth_without_removing_extreemes_preserves_point_count(self):
         gpx = self.parse('first_and_last_elevation.gpx')
         l = len(list(gpx.walk()))
